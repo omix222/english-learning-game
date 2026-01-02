@@ -348,51 +348,73 @@
         const vocabularyQuestions = [
             {
                 word: "Accommodate",
-                question: "次の意味に最も近い単語はどれ？「適応させる、収容する」",
-                options: ["拒否する", "適応させる", "無視する", "破壊する"],
-                correct: 1
+                question: "Accommodate の意味は？",
+                options: ["適応させる、収容する", "拒否する", "無視する", "破壊する"],
+                correct: 0,
+                example: "The hotel can accommodate 500 guests."
             },
             {
                 word: "Ambiguous",
-                question: "次の意味に最も近い単語はどれ？「曖昧な、多義的な」",
-                options: ["明確な", "曖昧な", "簡単な", "複雑な"],
-                correct: 1
+                question: "Ambiguous の意味は？",
+                options: ["曖昧な、多義的な", "明確な", "簡単な", "複雑な"],
+                correct: 0,
+                example: "His answer was ambiguous and confusing."
             },
             {
                 word: "Pragmatic",
-                question: "次の意味に最も近い単語はどれ？「実用的な、現実的な」",
-                options: ["理想的な", "実用的な", "理論的な", "感情的な"],
-                correct: 1
+                question: "Pragmatic の意味は？",
+                options: ["実用的な、現実的な", "理想的な", "理論的な", "感情的な"],
+                correct: 0,
+                example: "We need a pragmatic approach to solve this."
             },
             {
                 word: "Resilient",
-                question: "次の意味に最も近い単語はどれ？「回復力のある、適応力のある」",
-                options: ["脆弱な", "回復力のある", "硬直した", "弱い"],
-                correct: 1
+                question: "Resilient の意味は？",
+                options: ["回復力のある、適応力のある", "脆弱な", "硬直した", "弱い"],
+                correct: 0,
+                example: "She is resilient and never gives up."
             },
             {
                 word: "Eloquent",
-                question: "次の意味に最も近い単語はどれ？「雄弁な、説得力のある」",
-                options: ["無口な", "雄弁な", "退屈な", "混乱した"],
-                correct: 1
+                question: "Eloquent の意味は？",
+                options: ["雄弁な、説得力のある", "無口な", "退屈な", "混乱した"],
+                correct: 0,
+                example: "He gave an eloquent speech at the conference."
             },
             {
                 word: "Meticulous",
-                question: "次の意味に最も近い単語はどれ？「細心の、綿密な」",
-                options: ["いい加減な", "綿密な", "急いだ", "無関心な"],
-                correct: 1
+                question: "Meticulous の意味は？",
+                options: ["細心の、綿密な", "いい加減な", "急いだ", "無関心な"],
+                correct: 0,
+                example: "She is meticulous about her work."
             },
             {
                 word: "Innovative",
-                question: "次の意味に最も近い単語はどれ？「革新的な、新しい」",
-                options: ["伝統的な", "革新的な", "古い", "普通の"],
-                correct: 1
+                question: "Innovative の意味は？",
+                options: ["革新的な、新しい", "伝統的な", "古い", "普通の"],
+                correct: 0,
+                example: "The company is known for innovative products."
             },
             {
                 word: "Collaborate",
-                question: "次の意味に最も近い単語はどれ？「協力する、共同作業する」",
-                options: ["競争する", "協力する", "妨害する", "避ける"],
-                correct: 1
+                question: "Collaborate の意味は？",
+                options: ["協力する、共同作業する", "競争する", "妨害する", "避ける"],
+                correct: 0,
+                example: "We need to collaborate on this project."
+            },
+            {
+                word: "Substantial",
+                question: "Substantial の意味は？",
+                options: ["かなりの、実質的な", "わずかな", "表面的な", "不十分な"],
+                correct: 0,
+                example: "There was a substantial increase in sales."
+            },
+            {
+                word: "Diligent",
+                question: "Diligent の意味は？",
+                options: ["勤勉な、熱心な", "怠惰な", "無関心な", "気まぐれな"],
+                correct: 0,
+                example: "He is a diligent student who studies every day."
             }
         ];
 
@@ -486,6 +508,12 @@
             const q = vocabularyQuestions[currentQuestion];
             gameArea.innerHTML = `
                 <div class="question-card">
+                    <div style="font-size: 2.5em; color: #667eea; font-weight: bold; margin-bottom: 15px;">
+                        ${q.word}
+                    </div>
+                    <div style="color: #666; font-style: italic; margin-bottom: 20px; font-size: 1.1em;">
+                        例文: ${q.example}
+                    </div>
                     <div class="question">${q.question}</div>
                     <div class="options">
                         ${q.options.map((opt, idx) => `
@@ -496,11 +524,11 @@
             `;
 
             gameArea.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', () => checkVocabularyAnswer(btn, q.correct));
+                btn.addEventListener('click', () => checkVocabularyAnswer(btn, q.correct, q.options[q.correct]));
             });
         }
 
-        function checkVocabularyAnswer(btn, correct) {
+        function checkVocabularyAnswer(btn, correct, correctAnswer) {
             const allBtns = document.querySelectorAll('.option-btn');
             allBtns.forEach(b => b.disabled = true);
 
@@ -514,7 +542,7 @@
             } else {
                 btn.classList.add('incorrect');
                 allBtns[correct].classList.add('correct');
-                showFeedback(false, "残念！正解は「" + vocabularyQuestions[currentQuestion].options[correct] + "」です。");
+                showFeedback(false, "残念！正解は「" + correctAnswer + "」です。");
                 streak = 0;
             }
 
