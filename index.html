@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Master - 大人の英語学習ゲーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .game-mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            padding: 20px;
+            border: 3px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .mode-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .game-area {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            padding: 15px 25px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option-btn.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .option-btn.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .input-answer {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .submit-btn {
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 15px 40px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .next-btn:hover {
+            background: #653a8a;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            border-radius: 5px;
+        }
+
+        .sentence-builder {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 60px;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .word-chip {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .word-chip:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .word-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .celebration {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .celebration h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .celebration-emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 English Master</h1>
+        <p class="subtitle">楽しく学ぶ大人の英語学習ゲーム</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">スコア</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">連続正解</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="total">0</div>
+                <div class="stat-label">回答数</div>
+            </div>
+        </div>
+
+        <div class="game-mode-selector" id="modeSelector">
+            <button class="mode-btn" data-mode="vocabulary">
+                📚 語彙クイズ
+            </button>
+            <button class="mode-btn" data-mode="sentence">
+                ✍️ 文章構築
+            </button>
+            <button class="mode-btn" data-mode="translation">
+                🌐 翻訳チャレンジ
+            </button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="game-area" id="gameArea"></div>
+    </div>
+
+    <script>
+        const vocabularyQuestions = [
+            {
+                word: "Accommodate",
+                question: "次の意味に最も近い単語はどれ？「適応させる、収容する」",
+                options: ["拒否する", "適応させる", "無視する", "破壊する"],
+                correct: 1
+            },
+            {
+                word: "Ambiguous",
+                question: "次の意味に最も近い単語はどれ？「曖昧な、多義的な」",
+                options: ["明確な", "曖昧な", "簡単な", "複雑な"],
+                correct: 1
+            },
+            {
+                word: "Pragmatic",
+                question: "次の意味に最も近い単語はどれ？「実用的な、現実的な」",
+                options: ["理想的な", "実用的な", "理論的な", "感情的な"],
+                correct: 1
+            },
+            {
+                word: "Resilient",
+                question: "次の意味に最も近い単語はどれ？「回復力のある、適応力のある」",
+                options: ["脆弱な", "回復力のある", "硬直した", "弱い"],
+                correct: 1
+            },
+            {
+                word: "Eloquent",
+                question: "次の意味に最も近い単語はどれ？「雄弁な、説得力のある」",
+                options: ["無口な", "雄弁な", "退屈な", "混乱した"],
+                correct: 1
+            },
+            {
+                word: "Meticulous",
+                question: "次の意味に最も近い単語はどれ？「細心の、綿密な」",
+                options: ["いい加減な", "綿密な", "急いだ", "無関心な"],
+                correct: 1
+            },
+            {
+                word: "Innovative",
+                question: "次の意味に最も近い単語はどれ？「革新的な、新しい」",
+                options: ["伝統的な", "革新的な", "古い", "普通の"],
+                correct: 1
+            },
+            {
+                word: "Collaborate",
+                question: "次の意味に最も近い単語はどれ？「協力する、共同作業する」",
+                options: ["競争する", "協力する", "妨害する", "避ける"],
+                correct: 1
+            }
+        ];
+
+        const sentenceQuestions = [
+            {
+                sentence: "I have been working here for five years",
+                words: ["have", "I", "working", "been", "for", "here", "years", "five"],
+                japanese: "私はここで5年間働いています"
+            },
+            {
+                sentence: "She will have finished the project by tomorrow",
+                words: ["She", "will", "finished", "have", "project", "the", "by", "tomorrow"],
+                japanese: "彼女は明日までにプロジェクトを終えているでしょう"
+            },
+            {
+                sentence: "They should have called us earlier",
+                words: ["They", "should", "called", "have", "us", "earlier"],
+                japanese: "彼らはもっと早く私たちに電話すべきだった"
+            },
+            {
+                sentence: "The book that I bought yesterday is interesting",
+                words: ["The", "book", "that", "I", "bought", "yesterday", "is", "interesting"],
+                japanese: "昨日買った本は面白い"
+            }
+        ];
+
+        const translationQuestions = [
+            {
+                japanese: "この問題は思ったより複雑です",
+                answer: "This problem is more complicated than I thought",
+                hints: ["complicated", "than", "thought"]
+            },
+            {
+                japanese: "彼女は英語を流暢に話すことができます",
+                answer: "She can speak English fluently",
+                hints: ["fluently", "speak", "can"]
+            },
+            {
+                japanese: "私たちは新しいプロジェクトに取り組んでいます",
+                answer: "We are working on a new project",
+                hints: ["working on", "project", "new"]
+            },
+            {
+                japanese: "その会議は来週月曜日に予定されています",
+                answer: "The meeting is scheduled for next Monday",
+                hints: ["scheduled", "meeting", "Monday"]
+            }
+        ];
+
+        let currentMode = null;
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let totalAnswered = 0;
+        let selectedAnswer = [];
+
+        document.getElementById('modeSelector').addEventListener('click', (e) => {
+            if (e.target.classList.contains('mode-btn')) {
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentMode = e.target.dataset.mode;
+                currentQuestion = 0;
+                startGame();
+            }
+        });
+
+        function startGame() {
+            document.getElementById('gameArea').classList.add('active');
+            updateProgress();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const gameArea = document.getElementById('gameArea');
+            
+            if (currentMode === 'vocabulary') {
+                loadVocabularyQuestion(gameArea);
+            } else if (currentMode === 'sentence') {
+                loadSentenceQuestion(gameArea);
+            } else if (currentMode === 'translation') {
+                loadTranslationQuestion(gameArea);
+            }
+        }
+
+        function loadVocabularyQuestion(gameArea) {
+            if (currentQuestion >= vocabularyQuestions.length) {
+                showCompletion(gameArea);
+                return;
+            }
+
+            const q = vocabularyQuestions[currentQuestion];
+            gameArea.innerHTML = `
+                <div class="question-card">
+                    <div class="question">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((opt, idx) => `
+                            <button class="option-btn" data-index="${idx}">${opt}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            gameArea.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => checkVocabularyAnswer(btn, q.correct));
+            });
+        }
+
+        function checkVocabularyAnswer(btn, correct) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const selectedIndex = parseInt(btn.dataset.index);
+            
+            if (selectedIndex === correct) {
+                btn.classList.add('correct');
+                showFeedback(true, "正解です！素晴らしい！");
+                score += 10;
+                streak++;
+            } else {
+                btn.classList.add('incorrect');
+                allBtns[correct].classList.add('correct');
+                showFeedback(false, "残念！正解は「" + vocabularyQuestions[currentQuestion].options[correct] + "」です。");
+                streak = 0;
+            }
+
+            totalAnswered++;
+            updateStats();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                updateProgress();
+                loadQuestion();
+            }, 2500);
+        }
+
+        function loadSentenceQuestion(gameArea) {
+            if (currentQuestion >= sentenceQuestions.length) {
+                showCompletion(gameArea);
+                return;
+            }
+
+            const q = sentenceQuestions[currentQuestion];
+            selectedAnswer = [];
+            const shuffledWords = [...q.words].sort(() => Math.random() - 0.5);
+
+            gameArea.innerHTML = `
+                <div class="question-card">
+                    <div class="question">日本語：${q.japanese}</div>
+                    <div class="sentence-builder" id="sentenceBuilder">
+                        <span style="color: #999;">ここに単語をドラッグまたはクリック</span>
+                    </div>
+                    <div class="word-options" id="wordOptions">
+                        ${shuffledWords.map((word, idx) => `
+                            <div class="word-chip" data-word="${word}" data-index="${idx}">${word}</div>
+                        `).join('')}
+                    </div>
+                    <button class="submit-btn" id="submitSentence">確認</button>
+                </div>
+            `;
+
+            document.getElementById('wordOptions').addEventListener('click', (e) => {
+                if (e.target.classList.contains('word-chip')) {
+                    addWordToSentence(e.target);
+                }
+            });
+
+            document.getElementById('sentenceBuilder').addEventListener('click', (e) => {
+                if (e.target.classList.contains('word-chip')) {
+                    removeWordFromSentence(e.target);
+                }
+            });
+
+            document.getElementById('submitSentence').addEventListener('click', () => {
+                checkSentenceAnswer(q.sentence);
+            });
+        }
+
+        function addWordToSentence(chip) {
+            const word = chip.dataset.word;
+            selectedAnswer.push(word);
+            chip.style.display = 'none';
+            
+            const builder = document.getElementById('sentenceBuilder');
+            if (builder.querySelector('span')) {
+                builder.innerHTML = '';
+            }
+            
+            const newChip = document.createElement('div');
+            newChip.className = 'word-chip';
+            newChip.textContent = word;
+            newChip.dataset.word = word;
+            newChip.dataset.originalIndex = chip.dataset.index;
+            builder.appendChild(newChip);
+        }
+
+        function removeWordFromSentence(chip) {
+            const word = chip.dataset.word;
+            const originalIndex = chip.dataset.originalIndex;
+            
+            selectedAnswer = selectedAnswer.filter(w => w !== word);
+            chip.remove();
+            
+            const originalChip = document.querySelector(`#wordOptions .word-chip[data-index="${originalIndex}"]`);
+            if (originalChip) {
+                originalChip.style.display = 'block';
+            }
+            
+            const builder = document.getElementById('sentenceBuilder');
+            if (builder.children.length === 0) {
+                builder.innerHTML = '<span style="color: #999;">ここに単語をドラッグまたはクリック</span>';
+            }
+        }
+
+        function checkSentenceAnswer(correct) {
+            const userAnswer = selectedAnswer.join(' ');
+            const isCorrect = userAnswer.toLowerCase() === correct.toLowerCase();
+
+            if (isCorrect) {
+                showFeedback(true, "完璧です！正しい文章を作成できました！");
+                score += 15;
+                streak++;
+            } else {
+                showFeedback(false, `惜しい！正解は「${correct}」です。`);
+                streak = 0;
+            }
+
+            totalAnswered++;
+            updateStats();
+            document.getElementById('submitSentence').disabled = true;
+
+            setTimeout(() => {
+                currentQuestion++;
+                updateProgress();
+                loadQuestion();
+            }, 3000);
+        }
+
+        function loadTranslationQuestion(gameArea) {
+            if (currentQuestion >= translationQuestions.length) {
+                showCompletion(gameArea);
+                return;
+            }
+
+            const q = translationQuestions[currentQuestion];
+            
+            gameArea.innerHTML = `
+                <div class="question-card">
+                    <div class="question">次の日本語を英語に訳してください：</div>
+                    <div class="question" style="font-size: 1.3em; color: #764ba2; margin-top: 15px;">
+                        ${q.japanese}
+                    </div>
+                    <div style="margin-top: 20px; color: #666; font-size: 0.9em;">
+                        ヒント: ${q.hints.join(', ')}
+                    </div>
+                    <input type="text" class="input-answer" id="translationInput" placeholder="英語で入力してください...">
+                    <button class="submit-btn" id="submitTranslation">確認</button>
+                </div>
+            `;
+
+            document.getElementById('submitTranslation').addEventListener('click', () => {
+                checkTranslationAnswer(q.answer);
+            });
+
+            document.getElementById('translationInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkTranslationAnswer(q.answer);
+                }
+            });
+        }
+
+        function checkTranslationAnswer(correct) {
+            const userAnswer = document.getElementById('translationInput').value.trim();
+            
+            if (!userAnswer) {
+                showFeedback(false, "答えを入力してください。");
+                return;
+            }
+
+            const normalizedUser = userAnswer.toLowerCase().replace(/[.,!?]/g, '');
+            const normalizedCorrect = correct.toLowerCase().replace(/[.,!?]/g, '');
+            
+            const similarity = calculateSimilarity(normalizedUser, normalizedCorrect);
+            
+            if (similarity > 0.85) {
+                showFeedback(true, "素晴らしい翻訳です！");
+                score += 20;
+                streak++;
+            } else if (similarity > 0.6) {
+                showFeedback(false, `良い試みです！模範解答：「${correct}」`);
+                score += 5;
+                streak = 0;
+            } else {
+                showFeedback(false, `もう一度挑戦！模範解答：「${correct}」`);
+                streak = 0;
+            }
+
+            totalAnswered++;
+            updateStats();
+            document.getElementById('submitTranslation').disabled = true;
+            document.getElementById('translationInput').disabled = true;
+
+            setTimeout(() => {
+                currentQuestion++;
+                updateProgress();
+                loadQuestion();
+            }, 3500);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const words1 = str1.split(' ');
+            const words2 = str2.split(' ');
+            const commonWords = words1.filter(word => words2.includes(word));
+            return (commonWords.length * 2) / (words1.length + words2.length);
+        }
+
+        function showFeedback(isCorrect, message) {
+            const gameArea = document.getElementById('gameArea');
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.textContent = message;
+            gameArea.appendChild(feedback);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('total').textContent = totalAnswered;
+        }
+
+        function updateProgress() {
+            let total = 0;
+            if (currentMode === 'vocabulary') total = vocabularyQuestions.length;
+            else if (currentMode === 'sentence') total = sentenceQuestions.length;
+            else if (currentMode === 'translation') total = translationQuestions.length;
+            
+            const progress = (currentQuestion / total) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showCompletion(gameArea) {
+            const accuracy = totalAnswered > 0 ? Math.round((score / (totalAnswered * 20)) * 100) : 0;
+            
+            gameArea.innerHTML = `
+                <div class="celebration">
+                    <div class="celebration-emoji">🎉</div>
+                    <h2>おめでとうございます！</h2>
+                    <p style="font-size: 1.2em; margin: 20px 0; color: #666;">
+                        このモードを完了しました！
+                    </p>
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin: 20px 0;">
+                        <div style="font-size: 1.5em; color: #667eea; margin-bottom: 10px;">
+                            最終スコア: ${score}点
+                        </div>
+                        <div style="font-size: 1.2em; color: #666;">
+                            正確率: ${accuracy}%
+                        </div>
+                    </div>
+                    <button class="next-btn" onclick="resetGame()">
+                        別のモードに挑戦
+                    </button>
+                </div>
+            `;
+        }
+
+        function resetGame() {
+            currentQuestion = 0;
+            document.getElementById('gameArea').classList.remove('active');
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
