@@ -349,70 +349,70 @@
             {
                 word: "Accommodate",
                 question: "Accommodate の意味は？",
-                options: ["適応させる、収容する", "拒否する", "無視する", "破壊する"],
+                options: ["適応させる、収容する", "拒否する、断る", "無視する、放置する", "破壊する、壊す"],
                 correct: 0,
                 example: "The hotel can accommodate 500 guests."
             },
             {
                 word: "Ambiguous",
                 question: "Ambiguous の意味は？",
-                options: ["曖昧な、多義的な", "明確な", "簡単な", "複雑な"],
+                options: ["曖昧な、多義的な", "明確な、はっきりした", "簡単な、単純な", "複雑な、込み入った"],
                 correct: 0,
                 example: "His answer was ambiguous and confusing."
             },
             {
                 word: "Pragmatic",
                 question: "Pragmatic の意味は？",
-                options: ["実用的な、現実的な", "理想的な", "理論的な", "感情的な"],
+                options: ["実用的な、現実的な", "理想的な、理想主義の", "理論的な、抽象的な", "感情的な、情緒的な"],
                 correct: 0,
                 example: "We need a pragmatic approach to solve this."
             },
             {
                 word: "Resilient",
                 question: "Resilient の意味は？",
-                options: ["回復力のある、適応力のある", "脆弱な", "硬直した", "弱い"],
+                options: ["回復力のある、適応力のある", "脆弱な、もろい", "硬直した、融通のきかない", "弱い、か弱い"],
                 correct: 0,
                 example: "She is resilient and never gives up."
             },
             {
                 word: "Eloquent",
                 question: "Eloquent の意味は？",
-                options: ["雄弁な、説得力のある", "無口な", "退屈な", "混乱した"],
+                options: ["雄弁な、説得力のある", "無口な、口数の少ない", "退屈な、つまらない", "混乱した、支離滅裂な"],
                 correct: 0,
                 example: "He gave an eloquent speech at the conference."
             },
             {
                 word: "Meticulous",
                 question: "Meticulous の意味は？",
-                options: ["細心の、綿密な", "いい加減な", "急いだ", "無関心な"],
+                options: ["細心の、綿密な", "いい加減な、雑な", "急いだ、性急な", "無関心な、冷淡な"],
                 correct: 0,
                 example: "She is meticulous about her work."
             },
             {
                 word: "Innovative",
                 question: "Innovative の意味は？",
-                options: ["革新的な、新しい", "伝統的な", "古い", "普通の"],
+                options: ["革新的な、斬新な", "伝統的な、保守的な", "古い、時代遅れの", "普通の、平凡な"],
                 correct: 0,
                 example: "The company is known for innovative products."
             },
             {
                 word: "Collaborate",
                 question: "Collaborate の意味は？",
-                options: ["協力する、共同作業する", "競争する", "妨害する", "避ける"],
+                options: ["協力する、共同作業する", "競争する、対抗する", "妨害する、邪魔する", "避ける、回避する"],
                 correct: 0,
                 example: "We need to collaborate on this project."
             },
             {
                 word: "Substantial",
                 question: "Substantial の意味は？",
-                options: ["かなりの、実質的な", "わずかな", "表面的な", "不十分な"],
+                options: ["かなりの、実質的な", "わずかな、少量の", "表面的な、うわべだけの", "不十分な、足りない"],
                 correct: 0,
                 example: "There was a substantial increase in sales."
             },
             {
                 word: "Diligent",
                 question: "Diligent の意味は？",
-                options: ["勤勉な、熱心な", "怠惰な", "無関心な", "気まぐれな"],
+                options: ["勤勉な、熱心な", "怠惰な、なまけた", "無関心な、無頓着な", "気まぐれな、不安定な"],
                 correct: 0,
                 example: "He is a diligent student who studies every day."
             }
@@ -506,6 +506,14 @@
             }
 
             const q = vocabularyQuestions[currentQuestion];
+            
+            // シャッフルされた選択肢を作成
+            const shuffledOptions = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+            shuffleArray(shuffledOptions);
+            
+            // 正解の新しいインデックスを見つける
+            const newCorrectIndex = shuffledOptions.findIndex(opt => opt.originalIndex === q.correct);
+            
             gameArea.innerHTML = `
                 <div class="question-card">
                     <div style="font-size: 2.5em; color: #667eea; font-weight: bold; margin-bottom: 15px;">
@@ -516,16 +524,24 @@
                     </div>
                     <div class="question">${q.question}</div>
                     <div class="options">
-                        ${q.options.map((opt, idx) => `
-                            <button class="option-btn" data-index="${idx}">${opt}</button>
+                        ${shuffledOptions.map((opt, idx) => `
+                            <button class="option-btn" data-index="${idx}">${opt.text}</button>
                         `).join('')}
                     </div>
                 </div>
             `;
 
             gameArea.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', () => checkVocabularyAnswer(btn, q.correct, q.options[q.correct]));
+                btn.addEventListener('click', () => checkVocabularyAnswer(btn, newCorrectIndex, q.options[q.correct]));
             });
+        }
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
         function checkVocabularyAnswer(btn, correct, correctAnswer) {
