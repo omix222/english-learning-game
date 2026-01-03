@@ -72,13 +72,9 @@ start index.html # Windows
 
 プルリクエストを歓迎します！大きな変更の場合は、まずissueを開いて変更内容を議論してください。
 
-## 📄 ライセンス
+## Github Pages
 
-MIT License
-
-## 👤 作者
-
-Created with ❤️ for English learners
+https://omix222.github.io/english-learning-game/
 
 ---
 
