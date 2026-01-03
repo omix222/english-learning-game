@@ -64,14 +64,6 @@ start index.html # Windows
 - 日常会話からビジネス表現まで
 - ヒント機能付き
 
-## 📸 スクリーンショット
-
-![English Master](https://via.placeholder.com/800x450?text=English+Master+Game)
-
-## 🤝 貢献
-
-プルリクエストを歓迎します！大きな変更の場合は、まずissueを開いて変更内容を議論してください。
-
 ## Github Pages
 
 https://omix222.github.io/english-learning-game/
